@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ImmuneOps – Next-Gen AI Reliability Platform</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --blue:#3b82f6; --cyan:#06b6d4; --purple:#a855f7;
+  --pink:#ec4899; --green:#22c55e; --amber:#f59e0b; --red:#ef4444;
+  --orange:#f97316; --indigo:#6366f1; --teal:#14b8a6;
+  --bg:#020617; --panel:rgba(15,23,42,.85);
+  --border:rgba(255,255,255,.1);
+  --text:#e5e7eb; --muted:#94a3b8;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Inter,system-ui,sans-serif;
+  color:var(--text);
+  background:#000;
+  line-height:1.6;
+  cursor:none;
+  overflow-x:hidden;
+}
+
+/* MODERN MINIMAL CURSOR */
+.cursor{
+  position:fixed;
+  width:8px;
+  height:8px;
+  background:linear-gradient(135deg, #06b6d4, #a855f7);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:9999;
+  transition:transform 0.15s ease, opacity 0.3s;
+  box-shadow:0 0 20px rgba(6,182,212,0.6), 0 0 40px rgba(168,85,247,0.4);
+}
+.cursor-follower{
+  position:fixed;
+  width:32px;
+  height:32px;
+  border:1.5px solid rgba(6,182,212,0.4);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:9998;
+  transition:all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.cursor.hover{
+  transform:scale(0.5);
+  box-shadow:0 0 30px rgba(6,182,212,0.9), 0 0 60px rgba(168,85,247,0.6);
+}
+.cursor-follower.hover{
+  transform:scale(1.8);
+  border-color:rgba(168,85,247,0.8);
+  border-width:2px;
+}
+
+/* CURSOR TEXT */
+.cursor-text{
+  position:fixed;
+  pointer-events:none;
+  z-index:9997;
+  color:var(--cyan);
+  font-size:12px;
+  font-weight:600;
+  opacity:0;
+  transition:opacity 0.3s;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+/* PARALLAX CANVAS */
+#parallaxCanvas{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:0;
+}
+.hero-content{
+  position:relative;
+  z-index:1;
+}
+
+/* FLOATING ELEMENTS */
+.floating-element{
+  position:absolute;
+  pointer-events:none;
+  z-index:1;
+  opacity:0.6;
+  transition:transform 0.3s ease;
+}
+.float-1{
+  top:15%;
+  left:10%;
+  width:80px;
+  height:80px;
+  background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(6,182,212,0.2));
+  border-radius:20px;
+  animation:float 6s ease-in-out infinite;
+  border:1px solid rgba(6,182,212,0.3);
+}
+.float-2{
+  top:60%;
+  right:15%;
+  width:60px;
+  height:60px;
+  background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(236,72,153,0.2));
+  border-radius:50%;
+  animation:float 8s ease-in-out infinite;
+  animation-delay:-2s;
+  border:1px solid rgba(168,85,247,0.3);
+}
+.float-3{
+  top:40%;
+  left:5%;
+  width:100px;
+  height:100px;
+  background:linear-gradient(135deg,rgba(6,182,212,0.15),rgba(168,85,247,0.15));
+  border-radius:30px;
+  animation:float 10s ease-in-out infinite;
+  animation-delay:-4s;
+  border:1px solid rgba(6,182,212,0.2);
+  backdrop-filter:blur(10px);
+}
+.float-4{
+  bottom:20%;
+  right:8%;
+  width:70px;
+  height:70px;
+  background:linear-gradient(135deg,rgba(236,72,153,0.2),rgba(34,197,94,0.2));
+  border-radius:15px;
+  animation:float 7s ease-in-out infinite;
+  animation-delay:-3s;
+  border:1px solid rgba(236,72,153,0.3);
+}
+@keyframes float{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-30px) rotate(5deg)}
+}
+
+/* REVEAL ANIMATIONS */
+.reveal{
+  opacity:0;
+  transform:translateY(50px);
+  transition:all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal.active{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.reveal-left{
+  opacity:0;
+  transform:translateX(-60px);
+  transition:all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.reveal-left.active{
+  opacity:1;
+  transform:translateX(0);
+}
+
+.reveal-right{
+  opacity:0;
+  transform:translateX(60px);
+  transition:all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.reveal-right.active{
+  opacity:1;
+  transform:translateX(0);
+}
+
+.reveal-scale{
+  opacity:0;
+  transform:scale(0.8);
+  transition:all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.reveal-scale.active{
+  opacity:1;
+  transform:scale(1);
+}
+
+.reveal-rotate{
+  opacity:0;
+  transform:rotate(-10deg) scale(0.9);
+  transition:all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.reveal-rotate.active{
+  opacity:1;
+  transform:rotate(0) scale(1);
+}
+
+/* STAGGER ANIMATIONS */
+.stagger-item{
+  opacity:0;
+  transform:translateY(30px);
+}
+.stagger-item.active{
+  animation:staggerIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes staggerIn{
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* MAGNETIC EFFECT */
+.magnetic{
+  transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* TILT EFFECT ON CARDS */
+.tilt-card{
+  transform-style:preserve-3d;
+  transition:transform 0.5s ease;
+}
+.tilt-card:hover{
+  transform:perspective(1000px) rotateX(var(--rotateX)) rotateY(var(--rotateY));
+}
+
+/* GLITCH EFFECT */
+.glitch{
+  position:relative;
+}
+.glitch:hover:before,
+.glitch:hover:after{
+  content:attr(data-text);
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+.glitch:hover:before{
+  animation:glitch-1 0.3s infinite;
+  color:var(--cyan);
+  z-index:-1;
+}
+.glitch:hover:after{
+  animation:glitch-2 0.3s infinite;
+  color:var(--purple);
+  z-index:-1;
+}
+@keyframes glitch-1{
+  0%{transform:translate(0)}
+  20%{transform:translate(-2px, 2px)}
+  40%{transform:translate(-2px, -2px)}
+  60%{transform:translate(2px, 2px)}
+  80%{transform:translate(2px, -2px)}
+  100%{transform:translate(0)}
+}
+@keyframes glitch-2{
+  0%{transform:translate(0)}
+  20%{transform:translate(2px, -2px)}
+  40%{transform:translate(2px, 2px)}
+  60%{transform:translate(-2px, -2px)}
+  80%{transform:translate(-2px, 2px)}
+  100%{transform:translate(0)}
+}
+
+/* WAVE EFFECT */
+.wave-text{
+  display:inline-block;
+}
+.wave-text span{
+  display:inline-block;
+  animation:wave 1.5s ease-in-out infinite;
+}
+.wave-text span:nth-child(1){animation-delay:0s}
+.wave-text span:nth-child(2){animation-delay:0.1s}
+.wave-text span:nth-child(3){animation-delay:0.2s}
+.wave-text span:nth-child(4){animation-delay:0.3s}
+.wave-text span:nth-child(5){animation-delay:0.4s}
+@keyframes wave{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+
+/* RIPPLE EFFECT */
+.ripple{
+  position:relative;
+  overflow:hidden;
+}
+.ripple:after{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:0;
+  height:0;
+  border-radius:50%;
+  background:rgba(6,182,212,0.4);
+  transform:translate(-50%, -50%);
+  transition:width 0.6s, height 0.6s;
+}
+.ripple:hover:after{
+  width:300px;
+  height:300px;
+}
+
+/* GLOW PULSE */
+@keyframes glow-pulse{
+  0%,100%{box-shadow:0 0 20px rgba(6,182,212,0.4)}
+  50%{box-shadow:0 0 40px rgba(168,85,247,0.6)}
+}
+
+/* BOUNCE IN */
+@keyframes bounceIn{
+  0%{opacity:0;transform:scale(0.3)}
+  50%{opacity:1;transform:scale(1.05)}
+  70%{transform:scale(0.9)}
+  100%{transform:scale(1)}
+}
+
+/* SLIDE UP FADE */
+@keyframes slideUpFade{
+  from{opacity:0;transform:translateY(40px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ZOOM ROTATE */
+@keyframes zoomRotate{
+  from{opacity:0;transform:scale(0.5) rotate(-180deg)}
+  to{opacity:1;transform:scale(1) rotate(0)}
+}
+
+/* FLIP IN */
+@keyframes flipIn{
+  from{opacity:0;transform:perspective(400px) rotateY(90deg)}
+  to{opacity:1;transform:perspective(400px) rotateY(0)}
+}
+
+/* ELASTIC SCALE */
+@keyframes elasticScale{
+  0%{transform:scale(0)}
+  50%{transform:scale(1.15)}
+  75%{transform:scale(0.95)}
+  100%{transform:scale(1)}
+}
+
+/* SHAKE */
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  10%,30%,50%,70%,90%{transform:translateX(-5px)}
+  20%,40%,60%,80%{transform:translateX(5px)}
+}
+
+/* GRADIENT SHIFT */
+@keyframes gradientShift{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+/* MORPH */
+@keyframes morph{
+  0%,100%{border-radius:60% 40% 30% 70% / 60% 30% 70% 40%}
+  50%{border-radius:30% 60% 70% 40% / 50% 60% 30% 60%}
+}
+
+/* PARTICLE TRAIL */
+.particle{
+  position:absolute;
+  width:4px;
+  height:4px;
+  background:var(--cyan);
+  border-radius:50%;
+  pointer-events:none;
+  animation:particleFade 1s ease-out forwards;
+}
+@keyframes particleFade{
+  to{opacity:0;transform:translateY(-50px) scale(0)}
+}
+
+/* BACKDROP */
+.backdrop{
+  position:fixed; inset:0;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(168,85,247,.15), transparent 50%),
+    radial-gradient(circle at 20% 80%, rgba(6,182,212,.15), transparent 55%),
+    radial-gradient(circle at 50% 50%, rgba(236,72,153,.08), transparent 60%);
+  animation:drift 20s infinite alternate;
+  z-index:-1;
+}
+@keyframes drift{to{transform:scale(1.08) rotate(2deg)}}
+
+/* LAYOUT */
+.container{max-width:1400px;margin:0 auto;padding:0 48px}
+.section{padding:120px 0}
+.section-title{font-size:3rem;font-weight:800;margin-bottom:24px;line-height:1.1}
+.section-subtitle{font-size:1.2rem;color:var(--muted);max-width:800px;margin-bottom:60px}
+
+/* NAVIGATION */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  background:rgba(2,6,23,.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  z-index:1000;padding:20px 0;
+}
+nav .container{display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:1.5rem;font-weight:700;color:var(--cyan)}
+.nav-links{display:flex;gap:40px;list-style:none}
+.nav-links a{color:var(--text);text-decoration:none;font-weight:500;transition:.3s}
+.nav-links a:hover{color:var(--cyan)}
+.cta-btn{
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  padding:12px 28px;border-radius:8px;
+  color:white;text-decoration:none;font-weight:600;
+  transition:.3s;border:none;cursor:pointer;
+}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(6,182,212,.4)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:100px;position:relative;overflow:hidden}
+.hero h1{font-size:4.5rem;font-weight:900;line-height:1.1;margin-bottom:30px}
+.hero h1 span{
+  background:linear-gradient(135deg,var(--cyan),var(--purple),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero p{font-size:1.3rem;color:var(--muted);max-width:700px;margin-bottom:40px}
+.hero-buttons{display:flex;gap:20px;flex-wrap:wrap}
+.btn-secondary{
+  background:transparent;border:2px solid var(--border);
+  padding:12px 28px;border-radius:8px;
+  color:var(--text);text-decoration:none;font-weight:600;
+  transition:.3s;cursor:pointer;
+}
+.btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:80px}
+.stat-card{text-align:center}
+.stat-value{font-size:3rem;font-weight:800;color:var(--cyan)}
+.stat-label{color:var(--muted);font-size:1rem}
+
+/* CARDS */
+.grid{display:grid;gap:32px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+
+.card{
+  background:var(--panel);backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  border-radius:20px;padding:40px;
+  transition:.3s;position:relative;overflow:hidden;
+}
+.card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(6,182,212,.5);
+  box-shadow:0 20px 60px rgba(6,182,212,.2);
+}
+.card h3{font-size:1.5rem;margin-bottom:16px;font-weight:700}
+.card p{color:var(--muted);line-height:1.7}
+
+.icon-box{
+  width:60px;height:60px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:24px;font-size:28px;
+}
+
+/* DIAGRAMS */
+.diagram-container{
+  background:var(--panel);backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  border-radius:20px;padding:60px;
+  margin:40px 0;position:relative;
+}
+
+/* ARCHITECTURE DIAGRAM */
+.architecture{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:40px;align-items:center;position:relative;
+}
+.arch-layer{text-align:center}
+.arch-box{
+  background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(168,85,247,.2));
+  border:2px solid var(--blue);border-radius:16px;
+  padding:30px;position:relative;
+  transition:.3s;
+}
+.arch-box:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 40px rgba(59,130,246,.5);
+}
+.arch-box h4{font-size:1.1rem;font-weight:700;margin-bottom:12px}
+.arch-box ul{list-style:none;font-size:.9rem;color:var(--muted)}
+.arch-box ul li{margin:8px 0;padding-left:20px;position:relative}
+.arch-box ul li:before{
+  content:"→";position:absolute;left:0;color:var(--cyan);
+}
+
+.flow-arrow{
+  position:absolute;top:50%;left:33%;right:67%;
+  height:3px;background:linear-gradient(90deg,var(--cyan),var(--purple));
+  animation:flow 2s infinite;
+}
+@keyframes flow{
+  0%{opacity:.3}
+  50%{opacity:1}
+  100%{opacity:.3}
+}
+
+/* FLOWCHART */
+.flowchart{
+  display:flex;flex-direction:column;gap:30px;align-items:center;
+}
+.flow-step{
+  background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(168,85,247,.15));
+  border:2px solid var(--cyan);border-radius:16px;
+  padding:30px 50px;position:relative;
+  max-width:600px;width:100%;
+}
+.flow-step h4{font-size:1.2rem;font-weight:700;margin-bottom:10px}
+.flow-step p{color:var(--muted);font-size:.95rem}
+.flow-connector{
+  width:3px;height:40px;
+  background:linear-gradient(180deg,var(--cyan),var(--purple));
+  position:relative;
+}
+.flow-connector:after{
+  content:"▼";position:absolute;bottom:-10px;left:50%;
+  transform:translateX(-50%);color:var(--purple);font-size:20px;
+}
+
+/* TOPOLOGY MAP */
+.topology{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  grid-template-rows:repeat(3,1fr);
+  gap:20px;position:relative;
+}
+.topo-node{
+  background:rgba(15,23,42,.9);
+  border:2px solid var(--border);border-radius:12px;
+  padding:20px;text-align:center;
+  transition:.3s;position:relative;
+}
+.topo-node:hover{
+  border-color:var(--green);
+  box-shadow:0 0 30px rgba(34,197,94,.3);
+}
+.topo-status{
+  position:absolute;top:10px;right:10px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 10px var(--green);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:1}
+  50%{opacity:.4}
+}
+.topo-node.warning .topo-status{background:var(--amber)}
+.topo-node.critical .topo-status{background:var(--red)}
+
+/* METRICS DASHBOARD */
+.metrics-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:24px;
+  margin-bottom:40px;
+}
+.metric-card{
+  background:var(--panel);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:16px;
+  padding:24px;
+}
+.metric-value{font-size:2.5rem;font-weight:800;margin:12px 0}
+.metric-label{color:var(--muted);font-size:.9rem}
+.metric-trend{
+  font-size:.85rem;color:var(--green);
+  display:flex;align-items:center;gap:4px;
+}
+.metric-trend.down{color:var(--red)}
+
+/* GRAPH */
+.graph-container{
+  background:var(--panel);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:16px;
+  padding:30px;height:300px;position:relative;
+}
+.graph{
+  display:flex;align-items:flex-end;gap:6px;
+  height:240px;margin-top:20px;
+}
+.bar{
+  flex:1;border-radius:6px 6px 0 0;
+  background:linear-gradient(180deg,var(--cyan),var(--blue));
+  transition:height .3s ease;position:relative;
+}
+.bar:hover{opacity:.8}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:60px}
+.timeline:before{
+  content:"";position:absolute;left:20px;top:0;bottom:0;
+  width:3px;background:linear-gradient(180deg,var(--cyan),var(--purple));
+}
+.timeline-item{
+  position:relative;margin-bottom:50px;
+  background:var(--panel);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:16px;
+  padding:30px;
+}
+.timeline-item:before{
+  content:"";position:absolute;left:-47px;top:30px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--cyan);border:3px solid var(--bg);
+  box-shadow:0 0 20px var(--cyan);
+}
+.timeline-item h4{font-size:1.2rem;margin-bottom:10px;color:var(--cyan)}
+
+/* CODE BLOCK */
+.code-block{
+  background:#0a0e1a;border:1px solid var(--border);
+  border-radius:12px;padding:30px;
+  font-family:monospace;font-size:.9rem;
+  overflow-x:auto;position:relative;
+}
+.code-block:before{
+  content:"YAML";position:absolute;top:10px;right:15px;
+  font-size:.7rem;color:var(--muted);
+}
+.code-line{margin:4px 0}
+.code-key{color:var(--cyan)}
+.code-value{color:var(--pink)}
+.code-comment{color:var(--muted)}
+
+/* COMPARISON TABLE */
+.comparison-table{
+  background:var(--panel);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;
+}
+.comparison-table table{width:100%;border-collapse:collapse}
+.comparison-table th{
+  background:rgba(6,182,212,.1);
+  padding:20px;text-align:left;font-weight:700;
+  border-bottom:2px solid var(--border);
+}
+.comparison-table td{padding:20px;border-bottom:1px solid var(--border)}
+.comparison-table tr:last-child td{border-bottom:none}
+.check{color:var(--green);font-size:1.2rem}
+.cross{color:var(--red);font-size:1.2rem}
+
+/* AI REASONING */
+.ai-panel{
+  background:linear-gradient(135deg,rgba(6,182,212,.1),rgba(168,85,247,.1));
+  border:2px solid var(--purple);border-radius:16px;
+  padding:40px;position:relative;
+}
+.ai-panel:before{
+  content:"🧠 AI REASONING ENGINE";
+  position:absolute;top:15px;left:30px;
+  font-size:.75rem;font-weight:700;
+  color:var(--purple);letter-spacing:1px;
+}
+.ai-text{
+  font-size:1.1rem;line-height:1.8;
+  color:#c7d2fe;margin-top:30px;
+  min-height:120px;
+}
+
+/* FEATURES GRID */
+.features-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:32px;
+}
+.feature-card{
+  background:var(--panel);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:20px;
+  padding:40px;display:flex;gap:30px;
+  transition:.3s;
+}
+.feature-card:hover{
+  transform:translateX(10px);
+  border-color:rgba(6,182,212,.5);
+}
+.feature-icon{
+  font-size:3rem;flex-shrink:0;
+}
+.feature-content h3{font-size:1.3rem;margin-bottom:12px}
+.feature-content ul{list-style:none;color:var(--muted);margin-top:16px}
+.feature-content ul li{
+  padding:8px 0 8px 24px;position:relative;
+}
+.feature-content ul li:before{
+  content:"✓";position:absolute;left:0;
+  color:var(--green);font-weight:700;
+}
+
+/* TESTIMONIALS */
+.testimonial{
+  background:var(--panel);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:20px;
+  padding:40px;position:relative;
+}
+.testimonial:before{
+  content:""";position:absolute;top:20px;left:30px;
+  font-size:5rem;color:rgba(6,182,212,.2);
+  font-family:Georgia,serif;
+}
+.testimonial-text{font-size:1.1rem;line-height:1.8;margin-bottom:24px;padding-top:20px}
+.testimonial-author{display:flex;align-items:center;gap:16px}
+.testimonial-avatar{
+  width:50px;height:50px;border-radius:50%;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+}
+.testimonial-info h4{font-weight:600}
+.testimonial-info p{color:var(--muted);font-size:.9rem}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.pricing-card{
+  background:var(--panel);backdrop-filter:blur(20px);
+  border:2px solid var(--border);border-radius:20px;
+  padding:40px;text-align:center;transition:.3s;
+}
+.pricing-card.featured{
+  border-color:var(--cyan);
+  transform:scale(1.05);
+  box-shadow:0 20px 60px rgba(6,182,212,.3);
+}
+.pricing-card:hover{transform:translateY(-10px)}
+.pricing-tier{font-size:.9rem;color:var(--cyan);font-weight:700;margin-bottom:16px}
+.pricing-price{font-size:3rem;font-weight:800;margin:20px 0}
+.pricing-price span{font-size:1.2rem;color:var(--muted)}
+.pricing-features{list-style:none;margin:30px 0;text-align:left}
+.pricing-features li{padding:12px 0;border-bottom:1px solid var(--border)}
+.pricing-features li:last-child{border:none}
+
+/* FOOTER */
+footer{
+  background:rgba(2,6,23,.95);
+  border-top:1px solid var(--border);
+  padding:80px 0 40px;margin-top:120px;
+}
+.footer-grid{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:60px;margin-bottom:60px;
+}
+.footer-brand h3{font-size:1.5rem;margin-bottom:16px;color:var(--cyan)}
+.footer-brand p{color:var(--muted);line-height:1.7}
+.footer-links h4{margin-bottom:20px;font-weight:600}
+.footer-links ul{list-style:none}
+.footer-links ul li{margin:12px 0}
+.footer-links a{color:var(--muted);text-decoration:none;transition:.3s}
+.footer-links a:hover{color:var(--cyan)}
+.footer-bottom{
+  text-align:center;padding-top:40px;
+  border-top:1px solid var(--border);
+  color:var(--muted);font-size:.9rem;
+}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .architecture,.topology{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+  .hero h1{font-size:3rem}
+  .section-title{font-size:2.2rem}
+}
+
+@media(max-width:768px){
+  .container{padding:0 24px}
+  .nav-links{display:none}
+  .hero h1{font-size:2.5rem}
+  .stats{grid-template-columns:1fr}
+}
+
+/* ANIMATIONS */
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.fade-in{animation:fadeInUp .8s ease-out}
+
+</style>
+</head>
+
+<body>
+<div class="backdrop"></div>
+
+<!-- MODERN CURSOR -->
+<div class="cursor"></div>
+<div class="cursor-follower"></div>
+<div class="cursor-text"></div>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="container">
+    <div class="logo">🛡️ ImmuneOps</div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+    </ul>
+    <button class="cta-btn">Start Free Trial</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="parallaxCanvas"></canvas>
+  
+  <!-- Floating Elements -->
+  <div class="floating-element float-1"></div>
+  <div class="floating-element float-2"></div>
+  <div class="floating-element float-3"></div>
+  <div class="floating-element float-4"></div>
+  
+  <div class="container hero-content">
+    <div class="fade-in">
+      <h1>
+        The Future of<br/>
+        <span>Site Reliability Engineering</span><br/>
+        is Autonomous
+      </h1>
+      <p>
+        ImmuneOps is the world's first AI-powered reliability platform that 
+        continuously monitors, analyzes, and heals your cloud infrastructure—without 
+        human intervention. Stop firefighting incidents. Start preventing them.
+      </p>
+      <div class="hero-buttons">
+        <button class="cta-btn">Get Started Free</button>
+        <button class="btn-secondary">Watch Demo</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value">99.99%</div>
+          <div class="stat-label">Uptime Guarantee</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">< 30s</div>
+          <div class="stat-label">Mean Time to Detection</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">87%</div>
+          <div class="stat-label">Incident Reduction</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM STATEMENT -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">The Crisis in Modern Cloud Operations</h2>
+    <p class="section-subtitle">
+      Traditional SRE approaches are failing. Systems are too complex, failures happen 
+      too fast, and human operators can't keep up with the pace of modern cloud infrastructure.
+    </p>
+
+    <div class="grid grid-3">
+      <div class="card reveal" style="transition-delay:0.1s">
+        <div class="icon-box" style="background:rgba(239,68,68,.1);color:var(--red)">⚠️</div>
+        <h3>Alert Fatigue</h3>
+        <p>
+          Engineers receive 1000+ alerts per day. 95% are false positives or duplicates. 
+          Real incidents get buried in noise, leading to delayed response times and outages.
+        </p>
+      </div>
+      <div class="card reveal" style="transition-delay:0.2s">
+        <div class="icon-box" style="background:rgba(245,158,11,.1);color:var(--amber)">⏰</div>
+        <h3>Slow Response</h3>
+        <p>
+          Average time from incident detection to resolution: 4-6 hours. By the time 
+          on-call engineers wake up, investigate, and deploy fixes, revenue is already lost.
+        </p>
+      </div>
+      <div class="card reveal" style="transition-delay:0.3s">
+        <div class="icon-box" style="background:rgba(168,85,247,.1);color:var(--purple)">💸</div>
+        <h3>High Costs</h3>
+        <p>
+          Downtime costs $5,600 per minute on average. Manual incident response requires 
+          expensive 24/7 on-call rotations and burns out talented engineers.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION OVERVIEW -->
+<section class="section" id="features" style="background:rgba(6,182,212,.02)">
+  <div class="container">
+    <h2 class="section-title">How ImmuneOps Solves This</h2>
+    <p class="section-subtitle">
+      Our AI-powered platform combines real-time observability, intelligent analysis, 
+      and autonomous remediation into a closed-loop system that prevents incidents 
+      before they impact users.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-card reveal-left magnetic" style="transition-delay:0.1s">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-content">
+          <h3>Intelligent Observability</h3>
+          <p>
+            Goes beyond basic monitoring to understand system behavior patterns, 
+            dependencies, and normal operating conditions.
+          </p>
+          <ul>
+            <li>Real-time metrics aggregation across all services</li>
+            <li>Distributed tracing with automatic context correlation</li>
+            <li>Log analysis with natural language understanding</li>
+            <li>Custom SLO tracking and burn rate alerting</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card reveal-right magnetic" style="transition-delay:0.2s">
+        <div class="feature-icon">🧠</div>
+        <div class="feature-content">
+          <h3>AI Root Cause Analysis</h3>
+          <p>
+            Large Language Models trained on millions of incidents identify root 
+            causes in seconds, not hours.
+          </p>
+          <ul>
+            <li>Correlation engine finds relationships across metrics</li>
+            <li>Historical pattern matching against past incidents</li>
+            <li>Dependency graph analysis for cascading failures</li>
+            <li>Natural language explanations of findings</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card reveal-left magnetic" style="transition-delay:0.3s">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-content">
+          <h3>Autonomous Remediation</h3>
+          <p>
+            Takes corrective action automatically based on learned policies and 
+            risk assessment—no human in the loop.
+          </p>
+          <ul>
+            <li>Horizontal and vertical pod autoscaling</li>
+            <li>Service restarts with health verification</li>
+            <li>Traffic routing and circuit breaking</li>
+            <li>Resource reallocation and optimization</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card reveal-right magnetic" style="transition-delay:0.4s">
+        <div class="feature-icon">📊</div>
+        <div class="feature-content">
+          <h3>Continuous Learning</h3>
+          <p>
+            Every incident improves the system. The AI learns from outcomes and 
+            refines its decision-making over time.
+          </p>
+          <ul>
+            <li>Reinforcement learning from remediation outcomes</li>
+            <li>Feedback loop for false positive reduction</li>
+            <li>Automatic policy updates based on effectiveness</li>
+            <li>Knowledge sharing across customer environments</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="section" id="architecture">
+  <div class="container">
+    <h2 class="section-title">System Architecture</h2>
+    <p class="section-subtitle">
+      Built on a microservices architecture with event-driven communication, 
+      our platform scales from startups to enterprises processing billions of 
+      events per day.
+    </p>
+
+    <div class="diagram-container">
+      <h3 style="text-align:center;margin-bottom:50px;font-size:1.5rem">
+        High-Level Architecture Overview
+      </h3>
+      <div class="architecture">
+        <div class="arch-layer">
+          <div class="arch-box reveal-scale tilt-card" style="transition-delay:0.1s">
+            <h4>Data Ingestion Layer</h4>
+            <ul>
+              <li>Prometheus Exporters</li>
+              <li>OpenTelemetry Collectors</li>
+              <li>Log Shippers (Fluentd)</li>
+              <li>Kubernetes Events</li>
+              <li>Cloud Provider APIs</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="arch-layer">
+          <div class="arch-box reveal-scale tilt-card" style="border-color:var(--purple);transition-delay:0.2s">
+            <h4>AI Processing Engine</h4>
+            <ul>
+              <li>Time-Series Analysis</li>
+              <li>Anomaly Detection (ML)</li>
+              <li>LLM Root Cause Analysis</li>
+              <li>Decision Making Engine</li>
+              <li>Risk Assessment Module</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="arch-layer">
+          <div class="arch-box reveal-scale tilt-card" style="border-color:var(--green);transition-delay:0.3s">
+            <h4>Action Execution Layer</h4>
+            <ul>
+              <li>Kubernetes API Controller</li>
+              <li>Service Mesh Integration</li>
+              <li>Cloud Provider SDKs</li>
+              <li>Rollback Mechanisms</li>
+              <li>Audit & Compliance Logs</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:60px">
+      <div class="card">
+        <h3>🗄️ Data Storage & Processing</h3>
+        <p style="margin-bottom:20px">
+          Our platform uses a time-series optimized storage system capable of 
+          handling high-cardinality metrics at scale.
+        </p>
+        <ul style="list-style:none;color:var(--muted)">
+          <li style="padding:8px 0">→ <strong>TimescaleDB</strong> for metrics (10M+ datapoints/sec)</li>
+          <li style="padding:8px 0">→ <strong>Elasticsearch</strong> for logs and traces</li>
+          <li style="padding:8px 0">→ <strong>Redis</strong> for real-time state caching</li>
+          <li style="padding:8px 0">→ <strong>PostgreSQL</strong> for configuration and policies</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🔐 Security & Compliance</h3>
+        <p style="margin-bottom:20px">
+          Enterprise-grade security with SOC 2 Type II compliance and multi-tenant isolation.
+        </p>
+        <ul style="list-style:none;color:var(--muted)">
+          <li style="padding:8px 0">→ <strong>RBAC</strong> with fine-grained permissions</li>
+          <li style="padding:8px 0">→ <strong>Encryption</strong> at rest (AES-256) and in transit (TLS 1.3)</li>
+          <li style="padding:8px 0">→ <strong>Audit Logs</strong> for all AI decisions and actions</li>
+          <li style="padding:8px 0">→ <strong>Secret Management</strong> via HashiCorp Vault</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how-it-works" style="background:rgba(168,85,247,.02)">
+  <div class="container">
+    <h2 class="section-title">How It Works: The Autonomous Loop</h2>
+    <p class="section-subtitle">
+      Our system operates in a continuous feedback loop, constantly observing, 
+      learning, and improving your infrastructure's reliability.
+    </p>
+
+    <div class="diagram-container">
+      <div class="flowchart">
+        <div class="flow-step reveal-rotate ripple" style="transition-delay:0.1s">
+          <h4>1. Continuous Observation</h4>
+          <p>
+            Collects metrics, logs, and traces from all services. Establishes 
+            baseline behavior patterns using unsupervised learning algorithms.
+          </p>
+        </div>
+        <div class="flow-connector"></div>
+
+        <div class="flow-step reveal-rotate ripple" style="transition-delay:0.2s">
+          <h4>2. Anomaly Detection</h4>
+          <p>
+            Multiple ML models (ARIMA, Prophet, LSTM) detect deviations from 
+            normal behavior. Reduces false positives by 95% vs traditional alerting.
+          </p>
+        </div>
+        <div class="flow-connector"></div>
+
+        <div class="flow-step reveal-rotate ripple" style="transition-delay:0.3s">
+          <h4>3. Context Aggregation</h4>
+          <p>
+            Gathers all relevant signals: metrics, logs, traces, deployment history, 
+            dependency graphs, and historical incidents.
+          </p>
+        </div>
+        <div class="flow-connector"></div>
+
+        <div class="flow-step reveal-rotate ripple" style="transition-delay:0.4s">
+          <h4>4. AI Root Cause Analysis</h4>
+          <p>
+            LLM analyzes aggregated context to identify root cause. Considers 
+            service dependencies, recent changes, and historical patterns.
+          </p>
+        </div>
+        <div class="flow-connector"></div>
+
+        <div class="flow-step reveal-rotate ripple" style="transition-delay:0.5s">
+          <h4>5. Decision Making & Risk Assessment</h4>
+          <p>
+            Evaluates multiple remediation strategies. Assesses risk/reward for 
+            each option based on current system state and historical outcomes.
+          </p>
+        </div>
+        <div class="flow-connector"></div>
+
+        <div class="flow-step reveal-rotate ripple" style="transition-delay:0.6s">
+          <h4>6. Autonomous Execution</h4>
+          <p>
+            Executes chosen remediation with built-in safety checks. Monitors 
+            outcome and performs automatic rollback if health degrades.
+          </p>
+        </div>
+        <div class="flow-connector"></div>
+
+        <div class="flow-step reveal-rotate ripple" style="transition-delay:0.7s">
+          <h4>7. Learning & Feedback</h4>
+          <p>
+            Records outcome, updates models, and refines policies. Each incident 
+            makes the system smarter and more effective.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE DEMO -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Live Command Center</h2>
+    <p class="section-subtitle">
+      Real-time view of an autonomous SRE system managing a production Kubernetes cluster.
+    </p>
+
+    <div class="metrics-grid">
+      <div class="metric-card reveal-scale" style="transition-delay:0.1s">
+        <div class="metric-label">Traffic Load</div>
+        <div class="metric-value" id="rps" style="color:var(--cyan)">7,245</div>
+        <div class="metric-trend">▲ 12% vs baseline</div>
+      </div>
+
+      <div class="metric-card reveal-scale" style="transition-delay:0.2s">
+        <div class="metric-label">Avg Latency</div>
+        <div class="metric-value" id="latency" style="color:var(--green)">89ms</div>
+        <div class="metric-trend">▼ 5% improvement</div>
+      </div>
+
+      <div class="metric-card reveal-scale" style="transition-delay:0.3s">
+        <div class="metric-label">Error Rate</div>
+        <div class="metric-value" id="errors" style="color:var(--green)">0.02%</div>
+        <div class="metric-trend">Within SLO</div>
+      </div>
+
+      <div class="metric-card reveal-scale" style="transition-delay:0.4s">
+        <div class="metric-label">System Status</div>
+        <div class="metric-value" id="status" style="color:var(--green);font-size:1.8rem">HEALTHY</div>
+        <div class="metric-trend">All services nominal</div>
+      </div>
+    </div>
+
+    <div class="graph-container reveal" style="transition-delay:0.5s">
+      <h3>Request Latency (Last 60 Minutes)</h3>
+      <div class="graph" id="mainGraph"></div>
+    </div>
+
+    <div class="ai-panel reveal" style="margin-top:40px;transition-delay:0.6s">
+      <div class="ai-text" id="aiReasoning"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TOPOLOGY -->
+<section class="section" style="background:rgba(6,182,212,.02)">
+  <div class="container">
+    <h2 class="section-title">Kubernetes Topology Awareness</h2>
+    <p class="section-subtitle">
+      Real-time visualization of your cluster topology with health status, 
+      dependency tracking, and impact analysis for every action.
+    </p>
+
+    <div class="diagram-container">
+      <h3 style="text-align:center;margin-bottom:40px">
+        Live Production Cluster (16 Nodes, 142 Pods)
+      </h3>
+      <div class="topology">
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>Ingress LB</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">nginx-ingress</div>
+        </div>
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>API Gateway</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">kong-gateway</div>
+        </div>
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>Auth Service</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">4 replicas</div>
+        </div>
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>Rate Limiter</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">redis-backed</div>
+        </div>
+
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>User API</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">8 replicas</div>
+        </div>
+        <div class="topo-node warning">
+          <div class="topo-status"></div>
+          <strong>Product API</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">High CPU: 78%</div>
+        </div>
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>Order API</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">6 replicas</div>
+        </div>
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>Payment API</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">4 replicas</div>
+        </div>
+
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>PostgreSQL</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">Primary + 2 replicas</div>
+        </div>
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>Redis Cache</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">Cluster mode</div>
+        </div>
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>Kafka</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">3 brokers</div>
+        </div>
+        <div class="topo-node">
+          <div class="topo-status"></div>
+          <strong>S3 Storage</strong>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:8px">Object store</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:40px">
+      <h3>🎯 Impact Analysis Example</h3>
+      <p style="color:var(--muted);margin-bottom:20px">
+        When considering remediation actions, the system performs dependency analysis:
+      </p>
+      <div style="background:rgba(6,182,212,.05);border-left:3px solid var(--cyan);padding:20px;border-radius:8px">
+        <strong>Scenario:</strong> Product API showing high CPU (78%)<br/><br/>
+        <strong>Dependency Analysis:</strong>
+        <ul style="list-style:none;margin-top:12px;color:var(--muted)">
+          <li>→ Direct upstream: API Gateway (OK), Auth Service (OK)</li>
+          <li>→ Direct downstream: PostgreSQL (OK), Redis Cache (OK)</li>
+          <li>→ Correlated services: User API (OK), Order API (OK)</li>
+        </ul>
+        <br/>
+        <strong>Recommended Action:</strong> <span style="color:var(--green)">Scale horizontally</span> (Low risk, high effectiveness)<br/>
+        <strong>Blast Radius:</strong> Zero impact on other services<br/>
+        <strong>Expected Outcome:</strong> CPU reduction to 45-50% within 2 minutes
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INCIDENT TIMELINE -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Real Incident Response Timeline</h2>
+    <p class="section-subtitle">
+      See how ImmuneOps detected and resolved a production incident in under 60 seconds—
+      before any user impact occurred.
+    </p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <h4>00:00 - Initial Detection</h4>
+        <p>
+          <strong>Trigger:</strong> Latency anomaly detected (p99 latency jumped from 120ms to 890ms)<br/>
+          <strong>Affected Service:</strong> Product Catalog API<br/>
+          <strong>Confidence:</strong> 94%
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <h4>00:03 - Context Gathering</h4>
+        <p>
+          <strong>Metrics Analyzed:</strong> CPU: 89%, Memory: 67%, Connection Pool: 95% saturated<br/>
+          <strong>Logs Found:</strong> 2,847 timeout errors in last 5 minutes<br/>
+          <strong>Recent Changes:</strong> Deployment 47 minutes ago (v2.8.1 → v2.8.2)
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <h4>00:08 - Root Cause Identified</h4>
+        <p>
+          <strong>Primary Cause:</strong> Database connection leak in new version<br/>
+          <strong>Evidence:</strong> Connection pool exhaustion correlates with error spike<br/>
+          <strong>Similar Historical Incidents:</strong> 3 matches (all resolved by rollback)
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <h4>00:12 - Decision Made</h4>
+        <p>
+          <strong>Action Selected:</strong> Automatic rollback to v2.8.1<br/>
+          <strong>Alternative Considered:</strong> Restart pods (rejected: symptom fix, not root cause)<br/>
+          <strong>Risk Assessment:</strong> Low (rollback to known-good version)
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <h4>00:18 - Execution Started</h4>
+        <p>
+          <strong>Action:</strong> Rolling deployment initiated (v2.8.2 → v2.8.1)<br/>
+          <strong>Strategy:</strong> 25% pods at a time with 10s health check delays<br/>
+          <strong>Safety Checks:</strong> Enabled (auto-abort if health degrades)
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <h4>00:52 - Resolution Confirmed</h4>
+        <p>
+          <strong>Result:</strong> Latency normalized (p99: 115ms)<br/>
+          <strong>Connection Pool:</strong> Utilization back to 32%<br/>
+          <strong>Error Rate:</strong> 0.01% (within SLO)<br/>
+          <strong>User Impact:</strong> Zero (resolved before alerts triggered)
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <h4>01:30 - Post-Incident Actions</h4>
+        <p>
+          <strong>Notification:</strong> Slack message sent to #sre-incidents with full context<br/>
+          <strong>Ticket Created:</strong> JIRA-8742 "Investigate connection leak in v2.8.2"<br/>
+          <strong>Deployment Gate:</strong> Version v2.8.2 automatically blocked from re-deploy<br/>
+          <strong>Learning:</strong> Model updated with incident pattern for future detection
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="section" style="background:rgba(168,85,247,.02)">
+  <div class="container">
+    <h2 class="section-title">ImmuneOps vs Traditional Approaches</h2>
+    <p class="section-subtitle">
+      See how our AI-powered platform compares to traditional monitoring and 
+      manual SRE practices.
+    </p>
+
+    <div class="comparison-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>Traditional Monitoring</th>
+            <th>Manual SRE</th>
+            <th>ImmuneOps</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Detection Time</strong></td>
+            <td>5-15 minutes</td>
+            <td>1-5 minutes</td>
+            <td><span style="color:var(--green)">< 30 seconds</span></td>
+          </tr>
+          <tr>
+            <td><strong>Root Cause Analysis</strong></td>
+            <td><span class="cross">✗</span> No analysis</td>
+            <td>30-120 minutes (manual)</td>
+            <td><span style="color:var(--green)">< 10 seconds (AI)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Remediation</strong></td>
+            <td><span class="cross">✗</span> Manual only</td>
+            <td>15-60 minutes (human)</td>
+            <td><span style="color:var(--green)">< 60 seconds (auto)</span></td>
+          </tr>
+          <tr>
+            <td><strong>False Positive Rate</strong></td>
+            <td>90-95%</td>
+            <td>60-70%</td>
+            <td><span style="color:var(--green)">< 5%</span></td>
+          </tr>
+          <tr>
+            <td><strong>24/7 Coverage</strong></td>
+            <td><span class="check">✓</span></td>
+            <td>Requires on-call rotation</td>
+            <td><span class="check">✓</span> Always active</td>
+          </tr>
+          <tr>
+            <td><strong>Learning & Improvement</strong></td>
+            <td><span class="cross">✗</span> Static rules</td>
+            <td>Manual runbook updates</td>
+            <td><span class="check">✓</span> Continuous ML</td>
+          </tr>
+          <tr>
+            <td><strong>Mean Time to Resolution</strong></td>
+            <td>2-4 hours</td>
+            <td>45-90 minutes</td>
+            <td><span style="color:var(--green)">< 2 minutes</span></td>
+          </tr>
+          <tr>
+            <td><strong>Dependency Awareness</strong></td>
+            <td><span class="cross">✗</span> No context</td>
+            <td>Manual mapping required</td>
+            <td><span class="check">✓</span> Auto-discovered</td>
+          </tr>
+          <tr>
+            <td><strong>Cost (Annual)</strong></td>
+            <td>$50K (tools only)</td>
+            <td>$300K+ (engineers)</td>
+            <td><span style="color:var(--green)">$60K</span> (all-inclusive)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- IMPLEMENTATION -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Easy Implementation</h2>
+    <p class="section-subtitle">
+      Get started in minutes with our Kubernetes operator. No complex configuration required.
+    </p>
+
+    <div class="grid grid-2">
+      <div>
+        <h3 style="margin-bottom:24px">Quick Start Guide</h3>
+        <div class="code-block">
+<div class="code-line"><span class="code-comment"># 1. Install ImmuneOps Operator</span></div>
+<div class="code-line"><span class="code-key">kubectl</span> apply -f https://install.immuneops.io/operator.yaml</div>
+<div class="code-line"></div>
+<div class="code-line"><span class="code-comment"># 2. Create configuration</span></div>
+<div class="code-line"><span class="code-key">apiVersion:</span> <span class="code-value">sre.immuneops.io/v1</span></div>
+<div class="code-line"><span class="code-key">kind:</span> <span class="code-value">ImmuneOps</span></div>
+<div class="code-line"><span class="code-key">metadata:</span></div>
+<div class="code-line">  <span class="code-key">name:</span> <span class="code-value">production-cluster</span></div>
+<div class="code-line"><span class="code-key">spec:</span></div>
+<div class="code-line">  <span class="code-key">mode:</span> <span class="code-value">autonomous</span></div>
+<div class="code-line">  <span class="code-key">actions:</span></div>
+<div class="code-line">    - <span class="code-value">scale</span></div>
+<div class="code-line">    - <span class="code-value">restart</span></div>
+<div class="code-line">    - <span class="code-value">rollback</span></div>
+<div class="code-line">  <span class="code-key">safetyLevel:</span> <span class="code-value">high</span></div>
+<div class="code-line"></div>
+<div class="code-line"><span class="code-comment"># 3. Deploy configuration</span></div>
+<div class="code-line"><span class="code-key">kubectl</span> apply -f immuneops.yaml</div>
+<div class="code-line"></div>
+<div class="code-line"><span class="code-comment"># That's it! System is now monitoring and protecting your cluster.</span></div>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin-bottom:24px">Integration Options</h3>
+        <div class="card">
+          <h4>📊 Observability Platforms</h4>
+          <ul style="list-style:none;margin:16px 0;color:var(--muted)">
+            <li style="padding:8px 0">✓ Prometheus / VictoriaMetrics</li>
+            <li style="padding:8px 0">✓ Grafana / Grafana Cloud</li>
+            <li style="padding:8px 0">✓ Datadog / New Relic</li>
+            <li style="padding:8px 0">✓ OpenTelemetry (OTLP)</li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:20px">
+          <h4>☁️ Cloud Providers</h4>
+          <ul style="list-style:none;margin:16px 0;color:var(--muted)">
+            <li style="padding:8px 0">✓ AWS (EKS, EC2, Lambda)</li>
+            <li style="padding:8px 0">✓ Google Cloud (GKE, GCE)</li>
+            <li style="padding:8px 0">✓ Azure (AKS, VMs)</li>
+            <li style="padding:8px 0">✓ Self-hosted Kubernetes</li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:20px">
+          <h4>🔔 Alerting & Communication</h4>
+          <ul style="list-style:none;margin:16px 0;color:var(--muted)">
+            <li style="padding:8px 0">✓ Slack / Microsoft Teams</li>
+            <li style="padding:8px 0">✓ PagerDuty / OpsGenie</li>
+            <li style="padding:8px 0">✓ Email / SMS / Webhooks</li>
+            <li style="padding:8px 0">✓ JIRA / ServiceNow ticketing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background:rgba(6,182,212,.02)">
+  <div class="container">
+    <h2 class="section-title">Trusted by Engineering Teams</h2>
+    <p class="section-subtitle">
+      Companies from startups to enterprises rely on Autonomous SRE to keep 
+      their systems running.
+    </p>
+
+    <div class="grid grid-2">
+      <div class="testimonial">
+        <div class="testimonial-text">
+          ImmuneOps reduced our incident count by 87% in the first month. 
+          What used to wake me up at 3 AM is now handled automatically. Our 
+          engineers can finally focus on building features instead of firefighting.
+        </div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar"></div>
+          <div class="testimonial-info">
+            <h4>Sarah Chen</h4>
+            <p>VP of Engineering, TechCorp</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <div class="testimonial-text">
+          The AI root cause analysis is incredibly accurate. It identified a 
+          database connection leak that our team spent 6 hours debugging last 
+          month. Now it detects and fixes these issues in under a minute.
+        </div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar"></div>
+          <div class="testimonial-info">
+            <h4>Marcus Johnson</h4>
+            <p>Senior SRE, FinanceApp</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <div class="testimonial-text">
+          We went from 4-hour MTTR to under 2 minutes. The cost savings from 
+          reduced downtime paid for the entire platform in the first quarter. 
+          This is the future of site reliability engineering.
+        </div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar"></div>
+          <div class="testimonial-info">
+            <h4>Priya Patel</h4>
+            <p>CTO, E-commerce Platform</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <div class="testimonial-text">
+          The learning capability is impressive. Each incident makes the system 
+          smarter. After 3 months, we're seeing 95% fewer false positives and 
+          the remediation suggestions are spot-on every time.
+        </div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar"></div>
+          <div class="testimonial-info">
+            <h4>Alex Rivera</h4>
+            <p>DevOps Lead, SaaS Startup</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="text-align:center">
+  <div class="container">
+    <h2 class="section-title">Ready to Transform Your SRE Practice?</h2>
+    <p class="section-subtitle" style="margin:0 auto 40px">
+      Join hundreds of engineering teams using ImmuneOps to eliminate 
+      incidents and improve reliability. Start your free 14-day trial today.
+    </p>
+    <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap">
+      <button class="cta-btn" style="padding:16px 40px;font-size:1.1rem">
+        Start Free Trial
+      </button>
+      <button class="btn-secondary" style="padding:16px 40px;font-size:1.1rem">
+        Schedule Demo
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>🛡️ ImmuneOps</h3>
+        <p>
+          The world's first AI-powered reliability platform that continuously 
+          monitors, analyzes, and heals cloud infrastructure without human intervention.
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">API Reference</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Press Kit</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">Case Studies</a></li>
+          <li><a href="#">Whitepapers</a></li>
+          <li><a href="#">Webinars</a></li>
+          <li><a href="#">Community</a></li>
+          <li><a href="#">Support</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      © 2024 ImmuneOps. All rights reserved. | Privacy Policy | Terms of Service | Security
+    </div>
+  </div>
+</footer>
+
+<script>
+// MODERN MINIMAL CURSOR
+const cursor = document.querySelector('.cursor');
+const cursorFollower = document.querySelector('.cursor-follower');
+const cursorText = document.querySelector('.cursor-text');
+let cursorMouseX = 0;
+let cursorMouseY = 0;
+let cursorX = 0;
+let cursorY = 0;
+let followerX = 0;
+let followerY = 0;
+
+// Update mouse position for cursor
+document.addEventListener('mousemove', (e) => {
+  cursorMouseX = e.clientX;
+  cursorMouseY = e.clientY;
+  
+  // Create particle trail occasionally
+  if (Math.random() > 0.92) {
+    createParticle(e.clientX, e.clientY);
+  }
+});
+
+// Smooth cursor animation with spring physics
+function animateCursor() {
+  const dx = cursorMouseX - cursorX;
+  const dy = cursorMouseY - cursorY;
+  
+  cursorX += dx * 0.35;
+  cursorY += dy * 0.35;
+  
+  const dxFollower = cursorMouseX - followerX;
+  const dyFollower = cursorMouseY - followerY;
+  
+  followerX += dxFollower * 0.12;
+  followerY += dyFollower * 0.12;
+  
+  cursor.style.transform = `translate(${cursorX - 4}px, ${cursorY - 4}px)`;
+  cursorFollower.style.transform = `translate(${followerX - 16}px, ${followerY - 16}px)`;
+  cursorText.style.transform = `translate(${followerX + 25}px, ${followerY - 20}px)`;
+  
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// Particle trail effect
+function createParticle(x, y) {
+  const particle = document.createElement('div');
+  particle.className = 'particle';
+  particle.style.left = x + 'px';
+  particle.style.top = y + 'px';
+  particle.style.background = `rgba(${Math.random() > 0.5 ? '6,182,212' : '168,85,247'}, 0.8)`;
+  document.body.appendChild(particle);
+  
+  setTimeout(() => particle.remove(), 1000);
+}
+
+// Enhanced hover effects with text
+const interactiveElements = document.querySelectorAll('a, button, .card, .topo-node, .testimonial, .arch-box, .flow-step, .feature-card');
+interactiveElements.forEach(el => {
+  el.addEventListener('mouseenter', (e) => {
+    cursor.classList.add('hover');
+    cursorFollower.classList.add('hover');
+    
+    // Show text for specific elements
+    const text = el.dataset.cursorText;
+    if (text) {
+      cursorText.textContent = text;
+      cursorText.style.opacity = '1';
+    }
+  });
+  
+  el.addEventListener('mouseleave', () => {
+    cursor.classList.remove('hover');
+    cursorFollower.classList.remove('hover');
+    cursorText.style.opacity = '0';
+  });
+});
+
+// MAGNETIC EFFECT
+const magneticElements = document.querySelectorAll('.magnetic');
+magneticElements.forEach(el => {
+  el.addEventListener('mousemove', (e) => {
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    el.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+  });
+  
+  el.addEventListener('mouseleave', () => {
+    el.style.transform = 'translate(0, 0)';
+  });
+});
+
+// TILT EFFECT
+const tiltCards = document.querySelectorAll('.tilt-card');
+tiltCards.forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const rotateX = (y - centerY) / 10;
+    const rotateY = (centerX - x) / 10;
+    
+    card.style.setProperty('--rotateX', rotateX + 'deg');
+    card.style.setProperty('--rotateY', rotateY + 'deg');
+  });
+  
+  card.addEventListener('mouseleave', () => {
+    card.style.setProperty('--rotateX', '0deg');
+    card.style.setProperty('--rotateY', '0deg');
+    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+  });
+});
+
+// SCROLL REVEAL ANIMATIONS
+const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-rotate');
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+});
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// STAGGER ANIMATION
+const staggerContainers = document.querySelectorAll('.grid, .features-grid, .metrics-grid');
+staggerContainers.forEach(container => {
+  const items = container.children;
+  
+  const staggerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        Array.from(items).forEach((item, index) => {
+          setTimeout(() => {
+            item.classList.add('stagger-item', 'active');
+          }, index * 100);
+        });
+        staggerObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  
+  staggerObserver.observe(container);
+});
+
+// FLOATING ELEMENTS PARALLAX
+const floatingElements = document.querySelectorAll('.floating-element');
+
+document.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth) - 0.5;
+  const y = (e.clientY / window.innerHeight) - 0.5;
+  
+  floatingElements.forEach((el, index) => {
+    const speed = (index + 1) * 0.5;
+    const moveX = x * 50 * speed;
+    const moveY = y * 50 * speed;
+    const rotate = x * 10 * speed;
+    
+    el.style.transform = `translate(${moveX}px, ${moveY}px) rotate(${rotate}deg)`;
+  });
+});
+
+// Add glow pulse to certain elements
+document.querySelectorAll('.metric-card, .ai-panel').forEach(el => {
+  el.style.animation = 'glow-pulse 3s ease-in-out infinite';
+});
+
+// Real-time metrics simulation
+const rpsEl = document.getElementById('rps');
+const latencyEl = document.getElementById('latency');
+const errorsEl = document.getElementById('errors');
+const statusEl = document.getElementById('status');
+const aiReasoning = document.getElementById('aiReasoning');
+const mainGraph = document.getElementById('mainGraph');
+
+// Check if elements exist
+if (!rpsEl || !latencyEl || !errorsEl || !statusEl || !aiReasoning || !mainGraph) {
+  console.error('Live Command Center elements not found');
+}
+
+let graphData = Array.from({length: 30}, () => Math.floor(80 + Math.random() * 60));
+
+const messages = [
+  "System operating within normal parameters. All SLOs are being met. Baseline metrics established.",
+  "Monitoring traffic patterns. Slight increase detected in user API requests. Within acceptable range.",
+  "Analyzing latency distribution across all services. p95 and p99 latencies are stable.",
+  "CPU utilization trending upward on Product API pods. Initiating proactive scaling analysis.",
+  "Database query performance nominal. Connection pool utilization at 32%. No optimization needed.",
+  "Deployment v2.8.3 successfully rolled out to 25% of pods. Health checks passing. Continuing rollout.",
+  "Traffic spike detected from APAC region. Auto-scaling triggered. Adding 3 additional pods.",
+  "Cache hit rate optimal at 94%. Redis cluster performing efficiently. No intervention required.",
+  "Root cause identified: Memory leak in background worker. Restarting affected pods with zero user impact.",
+  "Anomaly detected: Elevated error rate in payment service. Correlating with recent deployment. Initiating rollback procedure."
+];
+
+let messageIndex = 0;
+
+function typewriter(text, element) {
+  if (!element) return;
+  element.textContent = '';
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i < text.length) {
+      element.textContent += text[i];
+      i++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 25);
+}
+
+function updateMetrics() {
+  if (!rpsEl || !latencyEl || !errorsEl || !statusEl || !mainGraph || !aiReasoning) {
+    return;
+  }
+  
+  // Update RPS
+  const rps = Math.floor(6500 + Math.random() * 3000);
+  rpsEl.textContent = rps.toLocaleString();
+
+  // Update latency
+  const latency = Math.floor(75 + Math.random() * 80);
+  latencyEl.textContent = latency + 'ms';
+
+  // Update errors
+  const errorRate = (Math.random() * 0.05).toFixed(2);
+  errorsEl.textContent = errorRate + '%';
+
+  // Update status
+  if (rps > 9000 || latency > 140) {
+    statusEl.textContent = 'DEGRADED';
+    statusEl.style.color = 'var(--amber)';
+  } else {
+    statusEl.textContent = 'HEALTHY';
+    statusEl.style.color = 'var(--green)';
+  }
+
+  // Update graph
+  graphData.push(latency);
+  graphData.shift();
+
+  mainGraph.innerHTML = '';
+  graphData.forEach((value, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.style.height = (value / 200 * 240) + 'px';
+    mainGraph.appendChild(bar);
+  });
+
+  // Update AI reasoning
+  typewriter(messages[messageIndex], aiReasoning);
+  messageIndex = (messageIndex + 1) % messages.length;
+}
+
+// Initial update and interval
+setTimeout(() => {
+  updateMetrics();
+  setInterval(updateMetrics, 4000);
+}, 500);
+
+// PARALLAX ANIMATION
+const canvas = document.getElementById('parallaxCanvas');
+const ctx = canvas.getContext('2d');
+
+// Set canvas size
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Node class for network visualization
+class Node {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.radius = Math.random() * 3 + 2;
+    this.opacity = Math.random() * 0.5 + 0.3;
+    this.pulseSpeed = Math.random() * 0.02 + 0.01;
+    this.pulsePhase = Math.random() * Math.PI * 2;
+    
+    // Random color from theme
+    const colors = ['#3b82f6', '#06b6d4', '#a855f7', '#ec4899', '#22c55e'];
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+  }
+  
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    
+    // Bounce off edges
+    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    
+    // Keep within bounds
+    this.x = Math.max(0, Math.min(canvas.width, this.x));
+    this.y = Math.max(0, Math.min(canvas.height, this.y));
+    
+    // Pulse effect
+    this.pulsePhase += this.pulseSpeed;
+  }
+  
+  draw() {
+    const pulse = Math.sin(this.pulsePhase) * 0.3 + 0.7;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius * pulse, 0, Math.PI * 2);
+    ctx.fillStyle = this.color + Math.floor(this.opacity * 255).toString(16).padStart(2, '0');
+    ctx.fill();
+    
+    // Glow effect
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = this.color;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+// Data packet class for moving elements
+class DataPacket {
+  constructor(startNode, endNode) {
+    this.start = startNode;
+    this.end = endNode;
+    this.progress = 0;
+    this.speed = 0.005 + Math.random() * 0.01;
+    this.size = 2;
+    const colors = ['#3b82f6', '#06b6d4', '#a855f7', '#ec4899'];
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+  }
+  
+  update() {
+    this.progress += this.speed;
+    if (this.progress > 1) {
+      // Reassign new destination
+      this.start = this.end;
+      this.end = nodes[Math.floor(Math.random() * nodes.length)];
+      this.progress = 0;
+    }
+  }
+  
+  draw() {
+    const x = this.start.x + (this.end.x - this.start.x) * this.progress;
+    const y = this.start.y + (this.end.y - this.start.y) * this.progress;
+    
+    ctx.beginPath();
+    ctx.arc(x, y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = this.color;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+// Create nodes
+const nodes = [];
+const nodeCount = 40;
+for (let i = 0; i < nodeCount; i++) {
+  nodes.push(new Node());
+}
+
+// Create data packets
+const packets = [];
+const packetCount = 15;
+for (let i = 0; i < packetCount; i++) {
+  const start = nodes[Math.floor(Math.random() * nodes.length)];
+  const end = nodes[Math.floor(Math.random() * nodes.length)];
+  packets.push(new DataPacket(start, end));
+}
+
+// Mouse interaction
+let canvasMouseX = 0;
+let canvasMouseY = 0;
+let mouseActive = false;
+let targetMouseX = 0;
+let targetMouseY = 0;
+
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  targetMouseX = e.clientX - rect.left;
+  targetMouseY = e.clientY - rect.top;
+  mouseActive = true;
+});
+
+canvas.addEventListener('mouseleave', () => {
+  mouseActive = false;
+});
+
+// Smooth mouse following
+function updateMouse() {
+  if (mouseActive) {
+    canvasMouseX += (targetMouseX - canvasMouseX) * 0.1;
+    canvasMouseY += (targetMouseY - canvasMouseY) * 0.1;
+  }
+}
+
+// Animation loop
+function animate() {
+  // Update smooth mouse
+  updateMouse();
+  
+  // Clear with fade effect
+  ctx.fillStyle = 'rgba(2, 6, 23, 0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw connections between nearby nodes
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance < 150) {
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x, nodes[i].y);
+        ctx.lineTo(nodes[j].x, nodes[j].y);
+        const opacity = (1 - distance / 150) * 0.15;
+        ctx.strokeStyle = `rgba(6, 182, 212, ${opacity})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+  }
+  
+  // Mouse interaction - attract nearby nodes
+  if (mouseActive) {
+    nodes.forEach(node => {
+      const dx = canvasMouseX - node.x;
+      const dy = canvasMouseY - node.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance < 250) {
+        const force = (1 - distance / 250) * 0.8;
+        node.vx += (dx / distance) * force * 0.08;
+        node.vy += (dy / distance) * force * 0.08;
+        
+        // Draw connection to mouse
+        ctx.beginPath();
+        ctx.moveTo(node.x, node.y);
+        ctx.lineTo(canvasMouseX, canvasMouseY);
+        const opacity = (1 - distance / 250) * 0.4;
+        
+        // Create gradient for line
+        const gradient = ctx.createLinearGradient(node.x, node.y, canvasMouseX, canvasMouseY);
+        gradient.addColorStop(0, `rgba(168, 85, 247, ${opacity})`);
+        gradient.addColorStop(1, `rgba(6, 182, 212, ${opacity * 0.5})`);
+        
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    });
+    
+    // Draw mouse glow with pulsing effect
+    const pulseSize = 8 + Math.sin(Date.now() * 0.003) * 3;
+    ctx.beginPath();
+    ctx.arc(canvasMouseX, canvasMouseY, pulseSize, 0, Math.PI * 2);
+    
+    // Radial gradient for glow
+    const glowGradient = ctx.createRadialGradient(canvasMouseX, canvasMouseY, 0, canvasMouseX, canvasMouseY, pulseSize * 3);
+    glowGradient.addColorStop(0, 'rgba(168, 85, 247, 0.8)');
+    glowGradient.addColorStop(0.5, 'rgba(168, 85, 247, 0.4)');
+    glowGradient.addColorStop(1, 'rgba(168, 85, 247, 0)');
+    
+    ctx.fillStyle = glowGradient;
+    ctx.fill();
+    
+    // Inner bright core
+    ctx.beginPath();
+    ctx.arc(canvasMouseX, canvasMouseY, pulseSize * 0.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(168, 85, 247, 0.9)';
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = '#a855f7';
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+  
+  // Update and draw nodes
+  nodes.forEach(node => {
+    node.update();
+    node.draw();
+  });
+  
+  // Update and draw data packets
+  packets.forEach(packet => {
+    packet.update();
+    packet.draw();
+  });
+  
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
